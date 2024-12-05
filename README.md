@@ -11,7 +11,7 @@ This program dynamically generates x86-64 assembly instructions to call a global
 ---
 
 ### Prerequisites
-- **Linux OS**
+- **Linux OS / WSL(used)**
 - **g++ Compiler** (Install using: `sudo apt install g++`)
 
 ---
@@ -38,7 +38,8 @@ as chunk.s -o chunk.o
 objdump -M intel -D chunk.o
 ```
 
-## Outputs are given in 'read.txt' files in both part1 & part2 
+### Outputs are given in 'read.txt' files in both part1 & part2 
 
-## Any Contributions are welcome!
+### Contributions
+Any contributions are welcome! Feel free to fork the repository, submit issues, and create pull requests for improvements or fixes.
 
