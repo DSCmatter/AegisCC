@@ -19,18 +19,18 @@ This program dynamically generates x86-64 assembly instructions to call a global
 ## **Steps to Run the Program**
 
 1. Update the system packages:
-   ```
-   sudo apt update
-   ```
+```
+sudo apt update
+```
 2. Install g++:
-   ```
-   sudo apt install g++
-   ```
+```
+sudo apt install g++
+```
 3. Compile and run the programs:
    C++ code:
  ```
-   g++ -o hello_1 hello_1.cpp
-  ./hello_1
+ g++ -o hello_1 hello_1.cpp
+ ./hello_1
 ```
 Assembly Code:
 ```
