@@ -1,0 +1,99 @@
+main1.cpp (Final file for this project aka x86-x64 JIT compiler)
+
+Output - main1.cpp 
+
+[17:12:15] part2$ g++ -o main1  main1.cpp
+
+[17:12:36] part2$ ./main1 
+
+Memory content (18 bytes):
+0x55 0x48 0x89 0xe5 0x48 0xb8 0xe9 0x23 0x54 0x51 0xbb 0x55 0x00 0x00 0xff 0xd0 
+0x5d 0xc3 
+Before calling test(): 1 2 3 
+Inside test()...
+After calling test(): -4 -3 -2 
+
+Overview :- 
+This program demonstrates how to dynamically generate and execute machine code at runtime using executable memory in C++. 
+It uses a global function (test) to manipulate a global vector of integers. The code dynamically generates x86-64 assembly instructions 
+to call this function and executes those instructions by casting the allocated memory to a function pointer.
+
+Code Explanation
+
+1. MemoryPages Class
+
+This class manages a block of executable memory for storing and executing machine instructions.
+
+Members:
+
+uint8_t *mem: A pointer to the start of the allocated memory block.
+size_t page_size: The size of a memory page (determined using sysconf).
+size_t position: Tracks the current position within the allocated memory.
+Constructor:
+
+Allocates page_size bytes (or more if multiple pages are requested) using mmap.
+The memory is marked as readable, writable, and executable (PROT_READ | PROT_WRITE | PROT_EXEC).
+
+Destructor:
+Frees the allocated memory using munmap.
+
+Methods:
+push(const std::vector<uint8_t>& data): Copies a vector of bytes into the memory block.
+push(T value): Copies a value (e.g., a function pointer or an integer) into the memory block.
+show_memory(): Displays the content of the memory in hexadecimal format.
+
+2. AssemblyChunks Namespace
+
+This namespace contains pre-defined x86-64 assembly code snippets:
+
+prologue:
+
+0x55: push rbp (saves the base pointer).
+0x48 0x89 0xe5: mov rbp, rsp (sets the base pointer to the stack pointer).
+epilogue:
+
+0x5d: pop rbp (restores the base pointer).
+0xc3: ret (returns control to the caller).
+
+3. Global Data and Function
+
+Global Vector:
+
+std::vector<int> a{1, 2, 3} is a global vector of integers, modified by the test function.
+test Function:
+
+Prints a message and subtracts 5 from each element of the global vector.
+
+4. Main Program
+
+The program dynamically generates and executes machine code as follows:
+
+Allocate Executable Memory:
+
+An instance of MemoryPages is created, which allocates a block of memory for storing the generated machine code.
+Generate Assembly Instructions:
+
+Prologue: The stack frame is set up with push rbp and mov rbp, rsp.
+
+Function Call:
+0x48 0xb8: movabs rax, <address> moves the address of test into the rax register.
+
+0xff 0xd0: call rax calls the function at the address stored in rax.
+
+Epilogue: The stack frame is torn down with pop rbp and the function returns to the caller.
+Print Generated Machine Code:
+
+The show_memory method prints the generated assembly instructions in hexadecimal format.
+Execute Generated Code:
+
+The generated code is cast to a function pointer (void (*)()) and executed.
+This calls the test function dynamically from the generated machine code.
+Print Results:
+
+The global vector values are printed before and after the test function is called, showing that the values have been modified as expected.
+
+How the Assembly Works
+Prologue and Epilogue: These establish and clean up the stack frame for the function call, ensuring compatibility with standard calling conventions.
+
+Dynamic Function Call: The machine code embeds the address of the test function, enabling the generated code to call it.
+

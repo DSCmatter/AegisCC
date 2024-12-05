@@ -1,0 +1,96 @@
+part1 - is all about generating the machine code for a function at runtime and then copying the code in a part of the memory, marked as executable, and call it from C++.
+only hello_3.cpp & main.cpp(reduced hello_3) is relevant for full example. 
+
+Steps to run programs: 
+
+sudo apt update
+sudo apt install g++
+
+cd /path/to/your/directory
+
+run cpp code in linux using: 
+g++ -o hello_1 hello_1.cpp
+
+Execute the compiled program:
+./hello_1
+
+run assembly code using 
+
+as chunk.s -o chunk.o
+2 objdump -M intel -D chunk.o
+
+OUTPUT of chunk.s - Linux 
+[16:14:44] part1$ objdump -M intel -D chunk.o
+
+chunk.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <.text>:
+   0:   48 c7 c0 01 00 00 00    mov    rax,0x1
+   7:   48 c7 c7 01 00 00 00    mov    rdi,0x1
+   e:   48 8d 35 0a 00 00 00    lea    rsi,[rip+0xa]        # 0x1f
+  15:   48 c7 c2 11 00 00 00    mov    rdx,0x11
+  1c:   0f 05                   syscall 
+  1e:   c3                      ret    
+  1f:   48                      rex.W
+  20:   65 6c                   gs ins BYTE PTR es:[rdi],dx
+  22:   6c                      ins    BYTE PTR es:[rdi],dx
+  23:   6f                      outs   dx,DWORD PTR ds:[rsi]
+  24:   2c 20                   sub    al,0x20
+  26:   59                      pop    rcx
+  27:   6f                      outs   dx,DWORD PTR ds:[rsi]
+  28:   75 72                   jne    0x9c
+  2a:   20 4e 61                and    BYTE PTR [rsi+0x61],cl
+  2d:   6d                      ins    DWORD PTR es:[rdi],dx
+  2e:   65 0a 00                or     al,BYTE PTR gs:[rax]
+
+
+hello_2.cpp - we store the machine code in a vector 
+
+[16:29:42] part1$ ./hello_2
+What is your name?
+Vasant
+
+Machine code generated:
+48 c7 c0 1 0 0 0 
+48 c7 c7 1 0 0 0 
+48 8d 35 a 0 0 0 
+48 c7 c2 f 0 0 0 
+f 5 c3 48 65 6c 6c 
+6f 2c 20 56 61 73 61 
+6e 74 21 a 
+
+in hello_3.cpp(Final code of part1) - we allocate the required memeory size and transfer the generated machine code to the executeable memory, and have same code as in hello_2.cpp
+
+[16:36:58] part1$ g++ -o hello_3 hello_3.cpp
+[16:39:51] part1$ ./hello_3
+What is your name?
+Vasant
+
+Machine code generated:
+48 c7 c0 1 0 0 0 
+48 c7 c7 1 0 0 0 
+48 8d 35 a 0 0 0 
+48 c7 c2 f 0 0 0 
+f 5 c3 48 65 6c 6c 
+6f 2c 20 56 61 73 61 
+6e 74 21 a 
+
+Hello, Vasant!
+
+main.cpp 
+[17:05:13] g++ -o main main.cpp
+[17:06:43] part1$ ./main
+What is your name?
+Vasant
+
+Machine code generated:
+48 c7 c0 1 0 0 0 48 
+c7 c7 1 0 0 0 48 8d 
+35 a 0 0 0 48 c7 c2 
+f 0 0 0 f 5 c3 48 
+65 6c 6c 6f 2c 20 56 61 
+73 61 6e 74 21 a 
+Hello, Vasant!
