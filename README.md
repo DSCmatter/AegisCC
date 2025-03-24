@@ -1,4 +1,4 @@
-# x86-64 JIT Compiler
+# AegisCC
 
 This project demonstrates how to dynamically generate and execute machine code at runtime using executable memory in C++. It includes examples of using machine code embedded in memory, dynamically generated assembly instructions, and calling functions from C++ at runtime.
 
